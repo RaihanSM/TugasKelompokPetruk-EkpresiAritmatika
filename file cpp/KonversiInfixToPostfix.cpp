@@ -10,11 +10,13 @@ bool isOperator(char opr) {
     return opr == '+' || opr == '-' || opr == '*' || opr == '/' || opr == '%';
 }
 
+
 int precedence(char op) {
     if (op == '+' || op == '-') return 1;
     if (op == '*' || op == '/' || op == '%') return 2;
     return 0;
 }
+
 
 string infixToPostfix(string infix) {
     stack<string> operators;
@@ -23,11 +25,10 @@ string infixToPostfix(string infix) {
     string token;
     char lastChar = 0;
     bool lastWasOperatorOrParen = true; 
-
     while (ss >> token) {
         
         if (isdigit(token[0])) {
-            // Token is an operand
+            
             output.push_back(token);
             lastWasOperatorOrParen = false;
         } else if (token[0] == '-' && (lastWasOperatorOrParen || lastChar == '(')) {
@@ -35,7 +36,7 @@ string infixToPostfix(string infix) {
             output.push_back("-1");
             operators.push("*");
         } else if (isOperator(token[0])) {
-           
+         
             while (!operators.empty() && precedence(operators.top()[0]) >= precedence(token[0])) {
                 output.push_back(operators.top());
                 operators.pop();
@@ -43,22 +44,22 @@ string infixToPostfix(string infix) {
             operators.push(token);
             lastWasOperatorOrParen = true;
         } else if (token[0] == '(') {
-          
+        
             operators.push(token);
             lastWasOperatorOrParen = true;
         } else if (token[0] == ')') {
-         
+       
             while (!operators.empty() && operators.top() != "(") {
                 output.push_back(operators.top());
                 operators.pop();
             }
-            operators.pop(); 
+            operators.pop();
             lastWasOperatorOrParen = false;
         }
         lastChar = token[0];
     }
 
-  
+    
     while (!operators.empty()) {
         output.push_back(operators.top());
         operators.pop();
@@ -77,7 +78,7 @@ int main() {
     string infix;
     getline(cin, infix);
 
-
+ 
     for (int i = 0; i < infix.size(); ++i) {
         if (isOperator(infix[i]) || infix[i] == '(' || infix[i] == ')') {
             infix.insert(i, " ");
@@ -86,10 +87,11 @@ int main() {
         }
     }
 
-  string postfix = inflixToPostfix(infix);
+  
+    string postfix = infixToPostfix(infix);
 
-  cout << postfix << endl;
-
+  
+    cout << postfix << endl;
     return 0;
 }
 
