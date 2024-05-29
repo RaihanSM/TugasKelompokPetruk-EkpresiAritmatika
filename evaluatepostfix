@@ -7,12 +7,9 @@
 #include <sstream>
 using namespace std;
 
-int getPrecedence(char op) {
+int getPrecedence(char op){
     switch (op) {
         case '+':
-        case '-':
-            return 1;
-        case '*':
         case '/':
         case '%':
             return 2;
@@ -20,3 +17,87 @@ int getPrecedence(char op) {
             return 0;
     }
 }
+string infixToPostfix(const string &infix){
+    stack<char> operators;
+    string postfix;
+    for (size_t i=0; i<infix.size(); ++i){
+        char token = infix[i];
+        if (isspace(token)){
+            continue;
+}
+    if (isdigit(token) || (token == '-' && (i == 0 ||!isdigit(infix[-1] !=')'))) {
+        if (token == '-') {
+                postfix += token;
+                ++i;
+                while (i < infix.size() && isdigit(infix[i])) {
+                    postfix += infix[i];
+                    ++i;
+                }
+            } else {
+                while (i < infix.size() && isdigit(infix[i])) {
+                    postfix += infix[i];
+                    ++i;
+                }
+            }
+            postfix += ' ';
+            --i;
+        } else if (token == '(') {
+            operators.push(token);
+        } else if (token == ')') {
+            while (!operators.empty() && operators.top() != '(') {
+                postfix += operators.top();
+                postfix += ' ';
+                operators.pop();
+            }
+            operators.pop();
+        } else {
+            while (!operators.empty() && getPrecedence(operators.top()) >= getPrecedence(token)) {
+                postfix += operators.top();
+                postfix += ' ';
+                operators.pop();
+            }
+            operators.push(token);
+        }
+    }
+
+    while (!operators.empty()) {
+        postfix += operators.top();
+        postfix += ' ';
+        operators.pop();
+    }
+
+    return postfix;
+}
+int evaluatePostfix(const string &postfix) {
+    stack<int> operands;
+    istringstream tokens(postfix);
+    string token;
+
+    while (tokens >> token) {
+        if (isdigit(token[0]) || (token[0] == '-' && token.size() > 1)) {
+            operands.push(stoi(token));
+        } else {
+            int right = operands.top(); operands.pop();
+            int left = operands.top(); operands.pop();
+            switch (token[0]) {
+                case '+': operands.push(left + right); break;
+                case '-': operands.push(left - right); break;
+                case '*': operands.push(left * right); break;
+                case '/': operands.push(left / right); break;
+                case '%': operands.push(left % right); break;
+        }
+    }
+}
+    return operands.top();
+}
+innt main(){
+    string infix;
+    getline(cin, infix);
+
+    string postfix = infixToPostfix(infix);
+    int result = evaluatePostfix(postfix);
+
+    cout<< result << endl;
+    return 0;
+}
+
